@@ -1,4 +1,5 @@
 from django.contrib import admin
-from .models import workout
+from .models import user
 # Register your models here.
-admin.site.register(workout)
+
+admin.site.register(user)
