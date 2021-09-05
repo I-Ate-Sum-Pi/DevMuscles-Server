@@ -1,4 +1,4 @@
-from django.http import Http404, response 
+from django.http import Http404
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
 from rest_framework.response import Response
