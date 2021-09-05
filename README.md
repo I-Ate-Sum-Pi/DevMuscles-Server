@@ -5,6 +5,9 @@
 |Option|Route|Allowable Methods|
 |---|---|---|
 |1|/users|GET, POST|
+|2|/users/id|GET, PUT, DELETE|
+|3|/workouts|GET, POST|
+|4|/workouts/id|GET, PUT, DELETE|
 - Option 1 - GET --> gets all users from the DB, expected outcome:
 ```
 [
