@@ -1,11 +1,10 @@
-from django.http import Http404 
+from django.http import Http404, response 
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
 from rest_framework.response import Response
 from rest_framework import status
 
 from .serializers import UserRegistrationSerializer, UserSerializer
-
 
 class UserList(APIView):
     def get(self, request, format=None):
@@ -40,3 +39,8 @@ class UserDetail(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, user_id, format=None):
+        user = self.get_object(user_id)
+        user.delete()
+        return Response("User has been successfully deleted",status=status.HTTP_204_NO_CONTENT)
