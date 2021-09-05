@@ -5,7 +5,7 @@
 ```
 /users
 ```
-### Upon Get Request this will yeild all the users from the database. Expected output is as follows:
+- Upon Get Request this will yeild all the users from the database. Expected output is as follows:
 ```
 [
     {
