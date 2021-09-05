@@ -23,3 +23,13 @@
     ...etc
 ]
 ```
+- Option 1 - POST --> adds a user to the database, the request body needs to be in format following format:
+```
+{
+    "username": "example",
+    "first_name": "example",
+    "last_name": "example",
+    "password": "test123.",
+    "password_confirmation": "test123."
+}
+```
