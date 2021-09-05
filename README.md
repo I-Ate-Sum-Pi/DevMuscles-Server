@@ -2,9 +2,9 @@
 
 ## Routes
 
-```
-/users
-```
+|Route|Allowable Methods|
+|---|---|
+|/users|GET, POST|
 - Upon Get Request this will yeild all the users from the database. Expected output is as follows:
 ```
 [
