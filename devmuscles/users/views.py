@@ -1,3 +1,4 @@
+from django.http import Http404 
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
 from rest_framework.response import Response
@@ -18,3 +19,16 @@ class UserList(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserDetail(APIView):
+    def get_object(self, user_id):
+        try:
+            return User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            raise Http404
+
+    def get(self, request, user_id, format=None):
+        user = self.get_object(user_id)
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
