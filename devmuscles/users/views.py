@@ -32,3 +32,11 @@ class UserDetail(APIView):
         user = self.get_object(user_id)
         serializer = UserSerializer(user)
         return Response(serializer.data)
+
+    def put(self, request, user_id, format=None):
+        user = self.get_object(user_id)
+        serializer = UserSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
