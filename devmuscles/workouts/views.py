@@ -4,12 +4,12 @@ from .models import Workout
 from rest_framework.response import Response
 from rest_framework import serializers, status
 from .serializers import WorkoutSerializer
+from rest_framework.decorators import api_view
 
 # Create your views here.
 class WorkoutList(APIView):    
     def get(self, request, format=None):
             workouts = Workout.objects.all()
-            print(workouts)
             serializer = WorkoutSerializer(workouts, many=True)
             return Response(serializer.data)
     
@@ -45,6 +45,9 @@ class WorkoutDetail(APIView):
         workout.delete()
         return Response("Workout has successfully been deleted", status=status.HTTP_204_NO_CONTENT)
 
-    #need to add a route to get all workouts of a particular person
-    #add a README for all metods for MAX
-    #check readme routes to see if they match
+   
+@api_view(['GET'])
+def userWorkouts(self, user_id, format=None):
+    workouts = Workout.objects.filter(user_id__pk = user_id)
+    serializer = WorkoutSerializer(workouts, many=True)
+    return Response(serializer.data)
