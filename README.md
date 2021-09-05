@@ -2,10 +2,10 @@
 
 ## Routes
 
-|Route|Allowable Methods|
-|---|---|
-|/users|GET, POST|
-- Upon Get Request this will yeild all the users from the database. Expected output is as follows:
+|Option|Route|Allowable Methods|
+|---|---|---|
+|1|/users|GET, POST|
+- Option 1 - GET --> gets all users from the DB, expected outcome:
 ```
 [
     {
