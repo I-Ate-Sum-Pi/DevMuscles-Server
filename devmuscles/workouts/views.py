@@ -44,3 +44,7 @@ class WorkoutDetail(APIView):
         workout = self.get_object(workout_id)
         workout.delete()
         return Response("Workout has successfully been deleted", status=status.HTTP_204_NO_CONTENT)
+
+    #need to add a route to get all workouts of a particular person
+    #add a README for all metods for MAX
+    #check readme routes to see if they match
