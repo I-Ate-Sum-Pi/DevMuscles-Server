@@ -10,8 +10,6 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import UserRegistrationSerializer, UserSerializer
 
 class UserList(APIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
     def get(self, request, format=None):
         users = User.objects.all()
         serializer = UserSerializer(users, many=True)
