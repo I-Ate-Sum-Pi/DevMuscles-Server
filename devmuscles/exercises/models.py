@@ -9,3 +9,6 @@ class Exercise(models.Model):
     name = models.CharField(max_length=500)
     reps = models.IntegerField()
     weight = models.DecimalField(max_digits = 4, decimal_places=1)
+
+    def __str__(self):
+        return self.name
