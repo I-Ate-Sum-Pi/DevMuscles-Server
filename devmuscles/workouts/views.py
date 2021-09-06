@@ -5,15 +5,20 @@ from rest_framework.response import Response
 from rest_framework import serializers, status
 from .serializers import WorkoutSerializer
 from rest_framework.decorators import api_view
-
+from django.contrib.auth.models import User
 # Create your views here.
-class WorkoutList(APIView):    
+class WorkoutList(APIView):   
+    from rest_framework.authentication import TokenAuthentication
+    from rest_framework.permissions import IsAuthenticated 
     def get(self, request, user_id, format=None):
             workouts = Workout.objects.filter(user_id__pk = user_id)
             serializer = WorkoutSerializer(workouts, many=True)
-            return Response(serializer.data)
+            user = User.objects.get(pk=user_id)
+            if request.user == user:
+                return Response(serializer.data)
+            else:
+                return Response("You are unauthorized to access this", status = status.HTTP_401_UNAUTHORIZED)
 
-    
     def post(self, request, user_id, format=None):
         serializer = WorkoutSerializer(data=request.data)
         if serializer.is_valid():

@@ -47,7 +47,7 @@ class UserDetail(APIView):
         else:
             return Response(serializer.data)
 
-    #if user changes username this breaks:
+    #if user changes username this breaks, need to be able to update email and password:
     # def put(self, request, user_id, format=None):
     #     user = self.get_object(user_id)
     #     serializer = UserSerializer(user, data=request.data)
