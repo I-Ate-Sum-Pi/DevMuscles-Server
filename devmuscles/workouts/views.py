@@ -27,7 +27,7 @@ class WorkoutList(APIView):
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             else:
-                return Response("You are unauthorized to post here", status = status.HTTP_401_UNAUTHORIZED) 
+                return Response("You are unauthorized to post this here", status = status.HTTP_401_UNAUTHORIZED) 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class WorkoutDetail(APIView):
@@ -44,14 +44,18 @@ class WorkoutDetail(APIView):
         if request.user == user:
             return Response(serializer.data)
         else:
-            return Response("You are unauthorized to access here", status = status.HTTP_401_UNAUTHORIZED) 
+            return Response("You are unauthorized to access this", status = status.HTTP_401_UNAUTHORIZED) 
 
     def put(self, request, user_id, workout_id, format=None):
         workout = self.get_object(user_id, workout_id)
         serializer = WorkoutSerializer(workout, data=request.data)
+        user = User.objects.get(pk=user_id)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
+            if request.user == user:
+                serializer.save()
+                return Response(serializer.data)
+            else:
+                return Response("You are unauthorized to access this", status = status.HTTP_401_UNAUTHORIZED) 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, user_id, workout_id, format=None):
