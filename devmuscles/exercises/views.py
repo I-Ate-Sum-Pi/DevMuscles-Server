@@ -22,6 +22,9 @@ class ExerciseList(APIView):
         return Response(serializer.data)
     
     def post(self, request, user_id, workout_id, format=None):
+        user = User.objects.get(pk=user_id)
+        if request.user != user or workout_id != request.data['workout_id']:
+            return Response("You are unauthorized to post this here", status = status.HTTP_401_UNAUTHORIZED)
         serializer = ExerciseSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
