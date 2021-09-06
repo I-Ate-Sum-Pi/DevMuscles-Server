@@ -12,3 +12,6 @@ class Date(models.Model):
     date = models.DateField(max_length=10)
     time = models.IntegerField(default=1000)
     completed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.id
