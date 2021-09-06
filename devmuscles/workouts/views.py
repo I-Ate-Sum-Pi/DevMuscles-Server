@@ -11,19 +11,23 @@ class WorkoutList(APIView):
     from rest_framework.authentication import TokenAuthentication
     from rest_framework.permissions import IsAuthenticated 
     def get(self, request, user_id, format=None):
-            workouts = Workout.objects.filter(user_id__pk = user_id)
-            serializer = WorkoutSerializer(workouts, many=True)
-            user = User.objects.get(pk=user_id)
-            if request.user == user:
-                return Response(serializer.data)
-            else:
-                return Response("You are unauthorized to access this", status = status.HTTP_401_UNAUTHORIZED)
+        workouts = Workout.objects.filter(user_id__pk = user_id)
+        serializer = WorkoutSerializer(workouts, many=True)
+        user = User.objects.get(pk=user_id)
+        if request.user == user:
+            return Response(serializer.data)
+        else:
+            return Response("You are unauthorized to access this", status = status.HTTP_401_UNAUTHORIZED)
 
     def post(self, request, user_id, format=None):
         serializer = WorkoutSerializer(data=request.data)
+        user = User.objects.get(pk=user_id)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            if request.user ==user:
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                return Response("You are unauthorized to post here", status = status.HTTP_401_UNAUTHORIZED) 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class WorkoutDetail(APIView):
