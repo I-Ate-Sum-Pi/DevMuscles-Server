@@ -59,8 +59,12 @@ class WorkoutDetail(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, user_id, workout_id, format=None):
-        workout = self.get_object(user_id, workout_id)
-        workout.delete()
-        return Response("Workout has successfully been deleted", status=status.HTTP_204_NO_CONTENT)
+        user = User.objects.get(pk=user_id)
+        if request.user == user:
+            workout = self.get_object(user_id, workout_id)
+            workout.delete()
+            return Response("Workout has successfully been deleted", status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response("You are unauthorized to delete this", status = status.HTTP_401_UNAUTHORIZED) 
 
    
