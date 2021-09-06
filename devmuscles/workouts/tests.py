@@ -3,8 +3,6 @@ from django.contrib.auth.models import User
 from .models import Workout
 # from rest_framework.test import APIRequestFactory
 
-from .views import WorkoutList
-
 
 # Create your tests here.
 
@@ -19,17 +17,21 @@ class TestWorkoutViews(BaseTestCase):
     factory = RequestFactory()
     c = Client()
 
-    def test_home(self):
+    def test_status_code_is_200(self):
         response = self.c.get(f'/users/{self.user.id}/workouts')
         data = response.json()
         print(response)
         print(data)
         assert response.status_code == 200
-        assert data[0]['name'] == 'chest'
 
     def test_workout_name_to_be_chest(self):
         response = self.c.get(f'/users/{self.user.id}/workouts')
         data = response.json()
         assert data[0]['name'] == 'chest'
+
+    def test_workout_id_to_be_TYEA(self):
+        response = self.c.get(f'/users/{self.user.id}/workouts')
+        data = response.json()
+        assert data[0]['id'] == 'TYEA'
 
     
