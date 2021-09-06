@@ -51,3 +51,9 @@ def userWorkouts(self, user_id, format=None):
     workouts = Workout.objects.filter(user_id__pk = user_id)
     serializer = WorkoutSerializer(workouts, many=True)
     return Response(serializer.data)
+
+@api_view(['GET'])
+def userWorkout(self, user_id, workout_id, format=None):
+    workouts = Workout.objects.filter(user_id__pk = user_id).get(id = workout_id)
+    serializer = WorkoutSerializer(workouts)
+    return Response(serializer.data)
