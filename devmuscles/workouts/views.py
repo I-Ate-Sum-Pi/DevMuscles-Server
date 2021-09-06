@@ -21,7 +21,7 @@ class WorkoutList(APIView):
 
     def post(self, request, user_id, format=None):
         user = User.objects.get(pk=user_id)
-        if request.user != user:
+        if request.user != user or user_id != request.data['user_id']:
             return Response("You are unauthorized to post this here", status = status.HTTP_401_UNAUTHORIZED) 
         serializer = WorkoutSerializer(data=request.data)
         if serializer.is_valid():
@@ -47,7 +47,7 @@ class WorkoutDetail(APIView):
 
     def put(self, request, user_id, workout_id, format=None):
         user = User.objects.get(pk=user_id)
-        if request.user != user:
+        if request.user != user or user_id != request.data['user_id']:
             return Response("You are unauthorized to access this", status = status.HTTP_401_UNAUTHORIZED)
         workout = self.get_object(user_id, workout_id)
         serializer = WorkoutSerializer(workout, data=request.data)
