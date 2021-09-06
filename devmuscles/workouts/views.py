@@ -5,20 +5,29 @@ from rest_framework.response import Response
 from rest_framework import serializers, status
 from .serializers import WorkoutSerializer
 from rest_framework.decorators import api_view
-
+from django.contrib.auth.models import User
 # Create your views here.
-class WorkoutList(APIView):    
+class WorkoutList(APIView):   
+    from rest_framework.authentication import TokenAuthentication
+    from rest_framework.permissions import IsAuthenticated 
     def get(self, request, user_id, format=None):
-            workouts = Workout.objects.filter(user_id__pk = user_id)
-            serializer = WorkoutSerializer(workouts, many=True)
+        workouts = Workout.objects.filter(user_id__pk = user_id)
+        serializer = WorkoutSerializer(workouts, many=True)
+        user = User.objects.get(pk=user_id)
+        if request.user == user:
             return Response(serializer.data)
+        else:
+            return Response("You are unauthorized to access this", status = status.HTTP_401_UNAUTHORIZED)
 
-    
     def post(self, request, user_id, format=None):
         serializer = WorkoutSerializer(data=request.data)
+        user = User.objects.get(pk=user_id)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            if request.user ==user:
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                return Response("You are unauthorized to post this here", status = status.HTTP_401_UNAUTHORIZED) 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class WorkoutDetail(APIView):
@@ -31,19 +40,31 @@ class WorkoutDetail(APIView):
     def get(self, request, user_id, workout_id, format=None):
         workout = self.get_object(user_id, workout_id)
         serializer = WorkoutSerializer(workout)
-        return Response(serializer.data)
+        user = User.objects.get(pk=user_id)
+        if request.user == user:
+            return Response(serializer.data)
+        else:
+            return Response("You are unauthorized to access this", status = status.HTTP_401_UNAUTHORIZED) 
 
     def put(self, request, user_id, workout_id, format=None):
         workout = self.get_object(user_id, workout_id)
         serializer = WorkoutSerializer(workout, data=request.data)
+        user = User.objects.get(pk=user_id)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
+            if request.user == user:
+                serializer.save()
+                return Response(serializer.data)
+            else:
+                return Response("You are unauthorized to access this", status = status.HTTP_401_UNAUTHORIZED) 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, user_id, workout_id, format=None):
-        workout = self.get_object(user_id, workout_id)
-        workout.delete()
-        return Response("Workout has successfully been deleted", status=status.HTTP_204_NO_CONTENT)
+        user = User.objects.get(pk=user_id)
+        if request.user == user:
+            workout = self.get_object(user_id, workout_id)
+            workout.delete()
+            return Response("Workout has successfully been deleted", status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response("You are unauthorized to delete this", status = status.HTTP_401_UNAUTHORIZED) 
 
    
