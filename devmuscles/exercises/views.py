@@ -8,11 +8,15 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Exercise
 from .serializers import ExerciseSerializer
+from django.contrib.auth.models import User
 
 # Create your views here.
 
 class ExerciseList(APIView):
     def get(self, request, user_id, workout_id, format=None):
+        user = User.objects.get(pk=user_id)
+        if request.user != user:
+            return Response("You are unauthorized to access this", status = status.HTTP_401_UNAUTHORIZED)
         exercises = Exercise.objects.filter(workout_id__id=workout_id)
         serializer = ExerciseSerializer(exercises, many=True)
         return Response(serializer.data)
@@ -49,5 +53,3 @@ class ExerciseDetail(APIView):
         workout = self.get_object(workout_id, exercise_id)
         workout.delete()
         return Response("Exercise has successfully been deleted", status=status.HTTP_204_NO_CONTENT)
-    
-
