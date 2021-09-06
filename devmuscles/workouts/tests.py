@@ -34,4 +34,9 @@ class TestWorkoutViews(BaseTestCase):
         data = response.json()
         assert data[0]['id'] == 'TYEA'
 
+    # def test_post_route_for_workouts(self):
+    #     request = self.c.post(f'users/{self.user.id}/workouts', { "id": "5","name": "triceps","user_id": 12})
+    #     data = request.json()
+    #     print(data)    
+
     
