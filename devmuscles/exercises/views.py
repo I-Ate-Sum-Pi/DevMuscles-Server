@@ -40,11 +40,17 @@ class ExerciseDetail(APIView):
             raise Http404
 
     def get(self, request, user_id, workout_id, exercise_id, format=None):
+        user = User.objects.get(pk=user_id)
+        if request.user != user:
+            return Response("You are unauthorized to access this", status = status.HTTP_401_UNAUTHORIZED)
         exercises = self.get_object(workout_id, exercise_id)
         serializer = ExerciseSerializer(exercises)
         return Response(serializer.data)
     
     def put(self, request, user_id, workout_id, exercise_id, format=None):
+        user = User.objects.get(pk=user_id)
+        if request.user != user or workout_id != request.data['workout_id']:
+            return Response("You are unauthorized to post this here", status = status.HTTP_401_UNAUTHORIZED)
         exercise = self.get_object(workout_id, exercise_id)
         serializer = ExerciseSerializer(exercise, data=request.data)
         if serializer.is_valid():
@@ -53,6 +59,9 @@ class ExerciseDetail(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, user_id, workout_id, exercise_id, format=None):
-        workout = self.get_object(workout_id, exercise_id)
-        workout.delete()
+        user = User.objects.get(pk=user_id)
+        if request.user != user:
+            return Response("You are unauthorized to access this", status = status.HTTP_401_UNAUTHORIZED)
+        exercise = self.get_object(workout_id, exercise_id)
+        exercise.delete()
         return Response("Exercise has successfully been deleted", status=status.HTTP_204_NO_CONTENT)
