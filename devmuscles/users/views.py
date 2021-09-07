@@ -2,7 +2,7 @@ from django.http import Http404
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import serializers, status
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -20,9 +20,10 @@ class UserList(APIView):
         data = {}
         if serializer.is_valid():   
             account = serializer.save()
-            token = Token.objects.get(user=account).key
+            token = Token.objects.get(user=account)
             data['username'] = account.username
-            data['token'] = token
+            data['token'] = token.key
+            data['id'] = token.user_id
             return Response(data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -38,7 +39,7 @@ class UserDetail(APIView):
 
     def get(self, request, user_id, format=None):
         user = self.get_object(user_id)
-        print(user)
+        # print(user)
         serializer = UserSerializer(user)
         if str(request.user) != str(serializer.data['username']):
             return Response("You are unauthorized to access this", status = status.HTTP_401_UNAUTHORIZED)
@@ -67,3 +68,16 @@ class UserDetail(APIView):
         else:    
             user.delete()
             return Response("User has been successfully deleted", status=status.HTTP_204_NO_CONTENT)
+
+
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
+
+
+class CustomObtainAuthToken(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        response = super(CustomObtainAuthToken, self).post(request, *args, **kwargs)
+        token = Token.objects.get(key=response.data['token'])
+        return Response({'token': token.key, 'id': token.user_id})
+

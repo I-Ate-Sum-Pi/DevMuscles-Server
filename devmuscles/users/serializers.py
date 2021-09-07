@@ -13,11 +13,10 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'password', 'password_confirmation')
+        fields = ('username', 'email', 'password', 'password_confirmation')
         write_only_fields = ('password', 'password_confirmation')
 
     def create(self, validated_data):
-        print(validated_data)
         password=validated_data['password']
         password_confirmation=validated_data['password_confirmation']
 
@@ -25,8 +24,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'password': 'Passwords must match.'}) 
         user = User.objects.create(
             username=validated_data['username'],
-            first_name=validated_data['first_name'],
-            last_name=validated_data['last_name']
+            email=validated_data['email']
         )
         user.set_password(password)
         user.save()
@@ -36,7 +34,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'first_name', 'last_name')
+        fields = ('id', 'username', 'email')
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
