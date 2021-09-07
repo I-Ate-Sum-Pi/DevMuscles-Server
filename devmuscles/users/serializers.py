@@ -17,7 +17,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         write_only_fields = ('password', 'password_confirmation')
 
     def create(self, validated_data):
-        print(validated_data)
         password=validated_data['password']
         password_confirmation=validated_data['password_confirmation']
 
