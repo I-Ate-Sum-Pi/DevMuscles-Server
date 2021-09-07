@@ -7,6 +7,7 @@ from .serializers import DateSerializer
 from rest_framework.decorators import api_view
 from django.contrib.auth.models import User
 from workouts.models import Workout
+from uuid import uuid4
 
 # Create your views here.
 
@@ -21,9 +22,11 @@ class DateList(APIView):
 
     def post(self, request, user_id, format=None):
         user = User.objects.get(pk=user_id)
-        if request.user != user or user_id != request.data['user_id']:
+        if request.user != user:
             return Response("You are unauthorized to post this here", status = status.HTTP_401_UNAUTHORIZED)
-        serializer = DateSerializer(data=request.data)
+        new_uuid = uuid4()
+        new_data = {"id": str(new_uuid), "workout_id": request.data['workout_id'], "user_id": user_id, "date": request.data['date'], "time": request.data['time'], "completed": request.data['completed']}
+        serializer = DateSerializer(data=new_data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -46,10 +49,12 @@ class DateDetail(APIView):
 
     def put(self, request, user_id, date_id, format=None):
         user = User.objects.get(pk=user_id)
-        if request.user != user or user_id != request.data['user_id']:
+        if request.user != user:
             return Response("You are unauthorized to post this here", status = status.HTTP_401_UNAUTHORIZED)
         date = self.get_object(user_id, date_id)
-        serializer = DateSerializer(date, data=request.data)
+        new_uuid = uuid4()
+        new_data = {"id": date_id, "workout_id": request.data['workout_id'], "user_id": user_id, "date": request.data['date'], "time": request.data['time'], "completed": request.data['completed']}
+        serializer = DateSerializer(date, new_data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
