@@ -9,6 +9,7 @@ djangorestframework = "*"
 psycopg2-binary = "*"
 pytest = "*"
 whitenoise = "*"
+gunicorn = "*"
 
 [dev-packages]
 
