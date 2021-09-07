@@ -39,7 +39,6 @@ class UserDetail(APIView):
 
     def get(self, request, user_id, format=None):
         user = self.get_object(user_id)
-        # print(user)
         serializer = UserSerializer(user)
         if str(request.user) != str(serializer.data['username']):
             return Response("You are unauthorized to access this", status = status.HTTP_401_UNAUTHORIZED)
