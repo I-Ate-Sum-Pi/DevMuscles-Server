@@ -8,6 +8,7 @@ django = "*"
 djangorestframework = "*"
 psycopg2-binary = "*"
 pytest = "*"
+whitenoise = "*"
 
 [dev-packages]
 
