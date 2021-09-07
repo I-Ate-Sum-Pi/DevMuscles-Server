@@ -84,14 +84,23 @@ Once again, note: save token and id on the front end. If the credientials are wr
 }
 ```
 
-- Option 2 - GET --> will get one particular user given an id, e.g. ```/users/12``` will yeild:
+- ```/users/:user_id``` --> GET --> gets the particular user from the DB, routes have been protected, you will not be able to access any other id except your own, hence why its important to store your id and token when you receive them after signing up or logging in, expected outcome for Jawwad: ```/users/94```:
 ```
 {
-    "id": 12,
-    "username": "Akash",
-    "first_name": "Akash",
-    "last_name": "surname"
+  "id": 94,
+  "username": "Jawwad",
+  "email": "jawwad@example.com"
 }
+
+Will not be able to access this without token in the request Header, will receive the following error:
+
+{
+  "detail": "Authentication credentials were not provided."
+}
+
+If you try accessing a different user id e.g. ```/users/12```, you will receive:
+
+"You are unauthorized to access this"
 ```
 - Option 2 - PUT --> can update details of one particular user given an id, the request body needs to be in the format below. e.g to change the last name of the user Akash:
 
