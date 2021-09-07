@@ -5,12 +5,18 @@
 
 ## Routes
 
-|Option|Route|Allowable Methods|
-|---|---|---|
-|1|/users|GET, POST|
-|2|/users/id|GET, PUT, DELETE|
-|3|/workouts|GET, POST|
-|4|/workouts/id|GET, PUT, DELETE|
+|Route|Allowable Methods|
+|---|---|
+|/login|POST|
+|/users|GET, POST|
+|/users/:user_id|GET, PUT, DELETE|
+|/users/:user_id/workouts|GET, POST|
+|/users/:user_id/workouts/:workout_id|GET, PUT, DELETE|
+|/users/:user_id/workouts/:workout_id/exercises|GET, POST|
+|/users/:user_id/workouts/:workout_id/exercises/:exercise_id|GET, PUT, DELETE|
+|/users/:user_id/dates|GET, POST|
+|/users/:user_id/dates/:date_id|GET, PUT, DELETE|
+
 - Option 1 - GET --> gets all users from the DB, expected outcome:
 ```
 [
