@@ -51,6 +51,14 @@ The server will respond with a username, token and generated id, for example, fo
 }
 
 NOTE: IT IS IMPORTANT TO STORE THE TOKEN AS WELL AS ID ON THE FRONT END, YOU WILL NOT BE AUTHORISED TO ACCESS ANY OF THE REMAINING ROUTES WITHOUT THEM.
+
+However, if the username you have selected already exists, the server will respond with:
+
+{
+  "username": [
+    "A user with that username already exists."
+  ]
+}
 ```
 
 - ```/login``` - POST --> if you already have an account, you can login. For example, let's login for Jawwad:
@@ -61,11 +69,14 @@ NOTE: IT IS IMPORTANT TO STORE THE TOKEN AS WELL AS ID ON THE FRONT END, YOU WIL
 }
 
 The server will respond with the corresponding token for that user and their id.
+
 {
   "token": "6dfed80bd9468f955f647b0ff4fe52b5e23360db",
   "id": 94
 }
+
 Once again, note: save token and id on the front end. If the credientials are wrong, you will receive the following:
+
 {
   "non_field_errors": [
     "Unable to log in with provided credentials."
