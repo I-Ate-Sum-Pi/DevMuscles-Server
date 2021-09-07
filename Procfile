@@ -1,0 +1,1 @@
+web: cd devmuscles && gunicorn devmuscles.wsgi --log-file -
