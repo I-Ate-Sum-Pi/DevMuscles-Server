@@ -2,52 +2,105 @@
 
 ## Routes
 # DevMuscles-Server
-
+https://devmuscles.herokuapp.com/
 ## Routes
 
-|Option|Route|Allowable Methods|
-|---|---|---|
-|1|/users|GET, POST|
-|2|/users/id|GET, PUT, DELETE|
-|3|/workouts|GET, POST|
-|4|/workouts/id|GET, PUT, DELETE|
-- Option 1 - GET --> gets all users from the DB, expected outcome:
+|Route|Allowable Methods|
+|---|---|
+|/login|POST|
+|/users|GET, POST|
+|/users/:user_id|GET, PUT, DELETE|
+|/users/:user_id/workouts|GET, POST|
+|/users/:user_id/workouts/:workout_id|GET, PUT, DELETE|
+|/users/:user_id/workouts/:workout_id/exercises|GET, POST|
+|/users/:user_id/workouts/:workout_id/exercises/:exercise_id|GET, PUT, DELETE|
+|/users/:user_id/dates|GET, POST|
+|/users/:user_id/dates/:date_id|GET, PUT, DELETE|
+
+- ```/users``` --> GET --> gets all users from the DB, expected outcome:
 ```
 [
-    {
-        "id": 1,
-        "username": "admin",
-        "first_name": "admin",
-        "last_name": "admin"
-    },
-    {
-        "id": 12,
-        "username": "Akash",
-        "first_name": "Akash",
-        "last_name": "surname"
-    },
-    ...etc
+  {
+    "id": 91,
+    "username": "Testuser",
+    "email": "test@example.com"
+  },
+  {
+    "id": 92,
+    "username": "test",
+    "email": "test@example.com"
+  },
+  ...etc
 ]
 ```
-- Option 1 - POST --> adds a user to the database, the request body needs to be in format following format:
+- ```/users``` - POST --> in order to sign in, you will need to create a new user, let's create a user for Jawwad, send data in the following format:
 ```
 {
-    "username": "example",
-    "first_name": "example",
-    "last_name": "example",
-    "password": "test123.",
-    "password_confirmation": "test123."
+    "username": "Jawwad",
+    "email": "jawwad@example.com",
+    "password": "password",
+    "password_confirmation": "password"
+}
+
+The server will respond with a username, token and generated id, for example, for the user we just created:
+
+{
+  "username": "Jawwad",
+  "token": "6dfed80bd9468f955f647b0ff4fe52b5e23360db",
+  "id": 94
+}
+
+NOTE: IT IS IMPORTANT TO STORE THE TOKEN AS WELL AS ID ON THE FRONT END, YOU WILL NOT BE AUTHORISED TO ACCESS ANY OF THE REMAINING ROUTES WITHOUT THEM.
+
+However, if the username you have selected already exists, the server will respond with:
+
+{
+  "username": [
+    "A user with that username already exists."
+  ]
 }
 ```
 
-- Option 2 - GET --> will get one particular user given an id, e.g. ```/users/12``` will yeild:
+- ```/login``` - POST --> if you already have an account, you can login. For example, let's login for Jawwad:
 ```
 {
-    "id": 12,
-    "username": "Akash",
-    "first_name": "Akash",
-    "last_name": "surname"
+    "username": "Jawwad",
+    "password": "password"
 }
+
+The server will respond with the corresponding token for that user and their id.
+
+{
+  "token": "6dfed80bd9468f955f647b0ff4fe52b5e23360db",
+  "id": 94
+}
+
+Once again, note: save token and id on the front end. If the credientials are wrong, you will receive the following:
+
+{
+  "non_field_errors": [
+    "Unable to log in with provided credentials."
+  ]
+}
+```
+
+- ```/users/:user_id``` --> GET --> gets the particular user from the DB, routes have been protected, you will not be able to access any other id except your own, hence why its important to store your id and token when you receive them after signing up or logging in, expected outcome for Jawwad: ```/users/94```:
+```
+{
+  "id": 94,
+  "username": "Jawwad",
+  "email": "jawwad@example.com"
+}
+
+Will not be able to access this without token in the request Header, will receive the following error:
+
+{
+  "detail": "Authentication credentials were not provided."
+}
+
+If you try accessing a different user id e.g. ```/users/12```, you will receive:
+
+"You are unauthorized to access this"
 ```
 - Option 2 - PUT --> can update details of one particular user given an id, the request body needs to be in the format below. e.g to change the last name of the user Akash:
 

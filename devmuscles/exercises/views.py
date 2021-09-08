@@ -9,6 +9,8 @@ from rest_framework.views import APIView
 from .models import Exercise
 from .serializers import ExerciseSerializer
 from django.contrib.auth.models import User
+from uuid import uuid4
+
 
 # Create your views here.
 
@@ -23,9 +25,11 @@ class ExerciseList(APIView):
     
     def post(self, request, user_id, workout_id, format=None):
         user = User.objects.get(pk=user_id)
-        if request.user != user or workout_id != request.data['workout_id']:
+        new_uuid = uuid4()
+        new_data = {"id": str(new_uuid), "workout_id": workout_id, "name": request.data['name'], "reps": request.data['reps'], "weight": request.data['weight']}
+        if request.user != user:
             return Response("You are unauthorized to post this here", status = status.HTTP_401_UNAUTHORIZED)
-        serializer = ExerciseSerializer(data=request.data)
+        serializer = ExerciseSerializer(data=new_data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -49,10 +53,11 @@ class ExerciseDetail(APIView):
     
     def put(self, request, user_id, workout_id, exercise_id, format=None):
         user = User.objects.get(pk=user_id)
-        if request.user != user or workout_id != request.data['workout_id']:
+        if request.user != user:
             return Response("You are unauthorized to post this here", status = status.HTTP_401_UNAUTHORIZED)
         exercise = self.get_object(workout_id, exercise_id)
-        serializer = ExerciseSerializer(exercise, data=request.data)
+        new_data = {"id": exercise_id, "workout_id": workout_id, "name": request.data['name'], "reps": request.data['reps'], "weight": request.data['weight']}
+        serializer = ExerciseSerializer(exercise, new_data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
