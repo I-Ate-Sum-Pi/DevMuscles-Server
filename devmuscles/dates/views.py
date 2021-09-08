@@ -4,6 +4,7 @@ from .models import Date
 from rest_framework.response import Response
 from rest_framework import serializers, status
 from .serializers import DateSerializer
+from workouts.serializers import WorkoutSerializer
 from rest_framework.decorators import api_view
 from django.contrib.auth.models import User
 from workouts.models import Workout
@@ -13,6 +14,11 @@ from uuid import uuid4
 
 class DateList(APIView):
     def get(self, request, user_id, format=None):
+        query = request.GET.get('date')
+        if query != None:
+            dates = Date.objects.filter(user_id__pk = user_id).filter(date=query)
+            serializer = DateSerializer(dates, many=True)
+            return Response(serializer.data)
         user = User.objects.get(pk=user_id)
         if request.user != user:
             return Response("You are unauthorized to access this", status = status.HTTP_401_UNAUTHORIZED)
@@ -44,15 +50,16 @@ class DateDetail(APIView):
         if request.user != user:
             return Response("You are unauthorized to access this", status = status.HTTP_401_UNAUTHORIZED)
         date = self.get_object(user_id, date_id)
-        serializer = DateSerializer(date)
-        return Response(serializer.data)
+        date_serializer = DateSerializer(date)
+        workout = Workout.objects.filter(user_id__pk = user_id).get(id = date_serializer.data['workout_id'])
+        workout_serializer = WorkoutSerializer(workout)
+        return Response({"date": date_serializer.data, "workout": workout_serializer.data })
 
     def put(self, request, user_id, date_id, format=None):
         user = User.objects.get(pk=user_id)
         if request.user != user:
             return Response("You are unauthorized to post this here", status = status.HTTP_401_UNAUTHORIZED)
         date = self.get_object(user_id, date_id)
-        new_uuid = uuid4()
         new_data = {"id": date_id, "workout_id": request.data['workout_id'], "user_id": user_id, "date": request.data['date'], "time": request.data['time'], "completed": request.data['completed']}
         serializer = DateSerializer(date, new_data)
         if serializer.is_valid():
