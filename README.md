@@ -236,6 +236,9 @@ Response upon successful deletion: "Exercise has successfully been deleted"
 ]
 ```
 
+- ```/users/:user_id/dates?date=yyyy-mm-dd``` --> GET --> if you add a query parameter of date in the correct format, you will receive a filtered list of dates where the dates match the query param.
+
+
 - ```/users/:user_id/dates``` --> POST --> you can schedule a workout on a particular day. E.g. for Jawwad, lets schdedule his back workout for the 10th September 2021 at 1.45pm.
 ```
 Send this:
