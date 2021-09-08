@@ -102,58 +102,193 @@ If you try accessing a different user id e.g. ```/users/12```, you will receive:
 
 "You are unauthorized to access this"
 ```
-- Option 2 - PUT --> can update details of one particular user given an id, the request body needs to be in the format below. e.g to change the last name of the user Akash:
 
-```
-send this:
-{
-    "id": 12,
-    "username": "Akash",
-    "first_name": "Akash",
-    "last_name": "Khambay"
-}
-```
-- Option 2 - DELETE --> ```/users/12``` with a request method of delete will remove Akash from the database.
-- Option 3 - GET --> gets all workouts that exist in the DB, expected outcome (Note - matched with the users table by user_id using a foreign key):
+- ```/users/:user_id``` --> DELETE --> will remove the user from the database, user will lose all their info.
+ 
+- ```/users/:user_id/workouts``` --> GET --> gets all workouts for that user from the DB, expected outcome for Jawwad ```/users/94/workouts```(have added 2 workouts before):
 ```
 [
-    {
-        "id": "1",
-        "name": "calves",
-        "user_id": 12
-    },
-    {
-        "id": "2",
-        "name": "back",
-        "user_id": 24
-    },
-    ...etc
+  {
+    "id": "2b9208a8-8543-4444-a858-5dacfe361c30",
+    "name": "chest",
+    "user_id": 94
+  },
+  {
+    "id": "cceb797e-e4ff-404b-aa65-abd3ed6c6db3",
+    "name": "back",
+    "user_id": 94
+  }
 ]
 ```
-- Option 3 - POST --> adds a new workout to the DB, the request body needs to be in format following format (Note: id will need to be given as a str atm, will change later to incoporate uuid, also the corresponding user_id needs to be given to match a workout with a user):
-```
-{
-    "id": "3",
-    "name": "shoulders",
-    "user_id": 24
-}
-```
-- Option 4 - GET --> will get one particular workout given an id, e.g. ```/workouts/1``` will yeild:
-```
-{
-    "id": "1",
-    "name": "calves",
-    "user_id": 12
-}
-```
-- Option 4 - PUT --> can update details of one particular workout given an id, the request body needs to be in the format below. e.g to change the workout name in the example above from calves to chest:
 
+- ```/users/:user_id/workouts``` --> POST --> This would post a new workout for that user, expected to receive data in the following format:
+```
+{
+    "name": "shoulders"
+}
+
+This would add another workout named shohulders to the user Jawwad. The server will respond in the following format:
+
+{
+  "id": "edb39584-c476-491e-827e-6e4806df00ad",
+  "name": "shoulders",
+  "user_id": 94
+}
+```
+
+- ```/users/:user_id/workouts/:workout_id``` --> GET --> gets one particular workout for a user. E.g to get Jawwad's shoulder workout, ```/users/94/workouts/edb39584-c476-491e-827e-6e4806df00ad```:
+```
+{
+  "id": "edb39584-c476-491e-827e-6e4806df00ad",
+  "name": "shoulders",
+  "user_id": 94
+}
+```
+
+- ```/users/:user_id/workouts/:workout_id``` --> PUT --> To update the name of a particular workout. E.g to change Jawwad's 'shoulder' workout, to 'intense shoulder' ```/users/94/workouts/edb39584-c476-491e-827e-6e4806df00ad```
 ```
 send this:
 {
-    "id": "1",
-    "name": "chest",
-    "user_id": 12
+    "name": "intense shoulders"
 }
 ```
-- Option 4 - DELETE --> ```/workouts/1``` with a request method of delete will remove the chest workout from the database.
+
+- ```/users/:user_id/workouts/:workout_id``` --> DELETE --> would delete the workout corresponding to the given id for the user.
+```
+Response upon successful deletion: "Workout has successfully been deleted"
+```
+
+- ```/users/:user_id/workouts/:workout_id/exercises``` --> GET --> gets all exercises associated with that user and that workout. E.g. to see all exercises in Jawwad's chest workout, ```/users/94/workouts/2b9208a8-8543-4444-a858-5dacfe361c30/exercises```, (note: previously populated with 2 exercises):
+```
+[
+  {
+    "id": "4cf91436-df29-4e4c-a7c3-a0df3f0f833c",
+    "name": "bench press",
+    "reps": 6,
+    "weight": "75.0",
+    "workout_id": "2b9208a8-8543-4444-a858-5dacfe361c30"
+  },
+  {
+    "id": "1c15e784-3a61-4a44-b35e-0684b457d699",
+    "name": "push ups",
+    "reps": 100,
+    "weight": "60.0",
+    "workout_id": "2b9208a8-8543-4444-a858-5dacfe361c30"
+  }
+]
+```
+
+- ```/users/:user_id/workouts/:workout_id/exercises``` --> POST --> will add a new exercise to that workout. E.g to add another chest exercise for Jawwad, you will need to send data in the following format to ```/users/94/workouts/2b9208a8-8543-4444-a858-5dacfe361c30/exercises```:
+```
+{
+    "name": "dips",
+    "reps": 40,
+    "weight": 60.0
+}
+
+Server wil respond with:
+
+{
+  "id": "612a686a-9175-468a-a1d7-b6d422325e86",
+  "name": "dips",
+  "reps": 40,
+  "weight": "60.0",
+  "workout_id": "2b9208a8-8543-4444-a858-5dacfe361c30"
+}
+```
+
+- ```/users/:user_id/workouts/:workout_id/exercises/:exercise_id``` --> GET --> will get the corresponding exercise for a given workout and user. E.g. to get Jawwad's push ups exercise, ```/users/94/workouts/2b9208a8-8543-4444-a858-5dacfe361c30/exercises/1c15e784-3a61-4a44-b35e-0684b457d699```:
+```
+{
+  "id": "1c15e784-3a61-4a44-b35e-0684b457d699",
+  "name": "push ups",
+  "reps": 100,
+  "weight": "60.0",
+  "workout_id": "2b9208a8-8543-4444-a858-5dacfe361c30"
+}
+```
+
+- ```/users/:user_id/workouts/:workout_id/exercises/:exercise_id``` --> PUT --> let's update the number of reps for Jawwad's push up exercise, send:
+```
+{
+    "name": "push ups",
+    "reps": 120,
+    "weight": 60.0
+}
+```
+
+- ```/users/:user_id/workouts/:workout_id/exercises/:exercise_id``` --> DELETE --> will delete that particular exercise from the workout.
+```
+Response upon successful deletion: "Exercise has successfully been deleted"
+```
+
+- ```/users/:user_id/dates``` --> GET --> gets all dates that have a workout has been scheduled on, e.g. ```/users/94/dates``` will respond with the following, (note: previously scheduled a chest workout):
+```
+[
+  {
+    "id": "55b1fa9a-89c4-4ff0-8e4e-b32ee582f7bd",
+    "date": "2021-09-08",
+    "time": 1630,
+    "completed": false,
+    "workout_id": "2b9208a8-8543-4444-a858-5dacfe361c30",
+    "user_id": 94
+  }
+]
+```
+
+- ```/users/:user_id/dates``` --> POST --> you can schedule a workout on a particular day. E.g. for Jawwad, lets schdedule his back workout for the 10th September 2021 at 1.45pm.
+```
+Send this:
+{
+    "workout_id": "cceb797e-e4ff-404b-aa65-abd3ed6c6db3",
+    "date": "2021-09-10",
+    "time": "1345",
+    "completed": "False"
+}
+
+Server will respond with:
+{
+  "id": "f5c76c08-c936-44cb-8ef7-72a8ef402013",
+  "date": "2021-09-10",
+  "time": 1345,
+  "completed": false,
+  "workout_id": "cceb797e-e4ff-404b-aa65-abd3ed6c6db3",
+  "user_id": 94
+}
+
+Note: You will need to provide the workout_id of the corresponding workout you wish to schedule. Also note that the date field is in the format "yyyy-mm-dd"
+```
+
+- ```/users/:user_id/dates/:date_id``` --> GET --> will get the corresponding date, additionally it will also send back details of the workout associated with that date, E.g. ```/users/94/dates/f5c76c08-c936-44cb-8ef7-72a8ef402013```:
+```
+{
+  "date": {
+    "id": "f5c76c08-c936-44cb-8ef7-72a8ef402013",
+    "date": "2021-09-10",
+    "time": 1345,
+    "completed": false,
+    "workout_id": "cceb797e-e4ff-404b-aa65-abd3ed6c6db3",
+    "user_id": 94
+  },
+  "workout": {
+    "id": "cceb797e-e4ff-404b-aa65-abd3ed6c6db3",
+    "name": "back",
+    "user_id": 94
+  }
+}
+```
+
+- ```/users/:user_id/dates/:date_id``` --> PUT --> E.g. let's update the time of the back workout and schedule it to 5pm for Jawwad, you will need to send the following to ```/users/94/dates/f5c76c08-c936-44cb-8ef7-72a8ef402013```:
+```
+{
+    "workout_id": "cceb797e-e4ff-404b-aa65-abd3ed6c6db3",
+    "date": "2021-09-10",
+    "time": "1700",
+    "completed": "False"
+}
+```
+
+```/users/:user_id/dates/:date_id``` --> DELETE --> will delete a scheduled date.
+```
+Response upon successful deletion: "Date has successfully been deleted"
+```
