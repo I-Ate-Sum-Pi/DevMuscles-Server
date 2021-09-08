@@ -57,9 +57,16 @@ class UserDetail(APIView):
                 return Response(serializer.data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         if "password" in request.data:
-            user.set_password(request.data['password'])
-            user.save()
-            return Response("Password updated successfully")
+            success = user.check_password(request.data['password'])
+            if success: 
+                if request.data['new_password'] == request.data['new_password_confirmation']:
+                    user.set_password(request.data['new_password'])
+                    user.save()
+                    return Response("Password updated successfully")
+                else: 
+                    return Response("Passwords do not match", status = status.HTTP_406_NOT_ACCEPTABLE)
+            else:
+                return Response("Incorrect Password", status = status.HTTP_406_NOT_ACCEPTABLE)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
