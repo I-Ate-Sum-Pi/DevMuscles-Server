@@ -102,6 +102,20 @@ If you try accessing a different user id e.g. ```/users/12```, you will receive:
 
 "You are unauthorized to access this"
 ```
+- ```/users/:user_id``` --> PUT --> a user can either change their email address of both, to change email, only provide an 'email' key and a value. To change password, provide 'password', 'new_password' and 'new_password_confirmation' keys.
+```
+E.g. To Change Jawwad's email from jawwad@example.com to jawwad@jawwad.com, send:
+{
+    "email": "jawwad@jawwad.com"
+}
+
+E.g. To Change Jawwad's password from 'password' to 'password123.' send:
+{
+    "password": "password",
+    "new_password": "password123.",
+    "new_password_confirmation": "password123."
+}
+```
 
 - ```/users/:user_id``` --> DELETE --> will remove the user from the database, user will lose all their info.
  

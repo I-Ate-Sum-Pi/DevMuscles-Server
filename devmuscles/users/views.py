@@ -40,24 +40,35 @@ class UserDetail(APIView):
     def get(self, request, user_id, format=None):
         user = self.get_object(user_id)
         serializer = UserSerializer(user)
-        if str(request.user) != str(serializer.data['username']):
-            return Response("You are unauthorized to access this", status = status.HTTP_401_UNAUTHORIZED)
+        if request.user != user:
+            return Response("You are unauthorized to post this here", status = status.HTTP_401_UNAUTHORIZED)
         else:
             return Response(serializer.data)
 
-    #if user changes username this breaks, need to be able to update email and password:
-    # def put(self, request, user_id, format=None):
-    #     user = self.get_object(user_id)
-    #     serializer = UserSerializer(user, data=request.data)
-    #     if serializer.is_valid():
-    #         print(request.user)
-    #         print(serializer.validated_data['username'])
-    #         if str(request.user) != str(serializer.validated_data['username']):
-    #             return Response("You are unauthorized to access this", status = status.HTTP_401_UNAUTHORIZED)
-    #         else:
-    #             serializer.save()
-    #             return Response(serializer.data)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def put(self, request, user_id, format=None):
+        user = self.get_object(user_id)
+        if request.user != user:
+            return Response("You are unauthorized to post this here", status = status.HTTP_401_UNAUTHORIZED)
+        if "email" in request.data:
+            new_data = {"id": user_id, "username": str(request.user), "email": request.data['email']}
+            serializer = UserSerializer(user, data=new_data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if "password" in request.data:
+            success = user.check_password(request.data['password'])
+            if success: 
+                if request.data['new_password'] == request.data['new_password_confirmation']:
+                    user.set_password(request.data['new_password'])
+                    user.save()
+                    return Response("Password updated successfully")
+                else: 
+                    return Response("Passwords do not match", status = status.HTTP_406_NOT_ACCEPTABLE)
+            else:
+                return Response("Incorrect Password", status = status.HTTP_406_NOT_ACCEPTABLE)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, user_id, format=None):
         user = self.get_object(user_id)

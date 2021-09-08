@@ -25,5 +25,4 @@ urlpatterns = [
     path('exercises/', include('exercises.urls')),
     path('dates/', include('dates.urls')),
     path('login/', CustomObtainAuthToken.as_view(), name='login'),
-    
 ]
