@@ -221,3 +221,74 @@ Server wil respond with:
 ```
 Response upon successful deletion: "Exercise has successfully been deleted"
 ```
+
+- ```/users/:user_id/dates``` --> GET --> gets all dates that have a workout has been scheduled on, e.g. ```/users/94/dates``` will respond with the following, (note: previously scheduled a chest workout):
+```
+[
+  {
+    "id": "55b1fa9a-89c4-4ff0-8e4e-b32ee582f7bd",
+    "date": "2021-09-08",
+    "time": 1630,
+    "completed": false,
+    "workout_id": "2b9208a8-8543-4444-a858-5dacfe361c30",
+    "user_id": 94
+  }
+]
+```
+
+- ```/users/:user_id/dates``` --> POST --> you can schedule a workout on a particular day. E.g. for Jawwad, lets schdedule his back workout for the 10th September 2021 at 1.45pm.
+```
+Send this:
+{
+    "workout_id": "cceb797e-e4ff-404b-aa65-abd3ed6c6db3",
+    "date": "2021-09-10",
+    "time": "1345",
+    "completed": "False"
+}
+
+Server will respond with:
+{
+  "id": "f5c76c08-c936-44cb-8ef7-72a8ef402013",
+  "date": "2021-09-10",
+  "time": 1345,
+  "completed": false,
+  "workout_id": "cceb797e-e4ff-404b-aa65-abd3ed6c6db3",
+  "user_id": 94
+}
+
+Note: You will need to provide the workout_id of the corresponding workout you wish to schedule. Also note that the date field is in the format "yyyy-mm-dd"
+```
+
+- ```/users/:user_id/dates/:date_id``` --> GET --> will get the corresponding date, additionally it will also send back details of the workout associated with that date, E.g. ```/users/94/dates/f5c76c08-c936-44cb-8ef7-72a8ef402013```:
+```
+{
+  "date": {
+    "id": "f5c76c08-c936-44cb-8ef7-72a8ef402013",
+    "date": "2021-09-10",
+    "time": 1345,
+    "completed": false,
+    "workout_id": "cceb797e-e4ff-404b-aa65-abd3ed6c6db3",
+    "user_id": 94
+  },
+  "workout": {
+    "id": "cceb797e-e4ff-404b-aa65-abd3ed6c6db3",
+    "name": "back",
+    "user_id": 94
+  }
+}
+```
+
+- ```/users/:user_id/dates/:date_id``` --> PUT --> E.g. let's update the time of the back workout and schedule it to 5pm for Jawwad, you will need to send the following to ```/users/94/dates/f5c76c08-c936-44cb-8ef7-72a8ef402013```:
+```
+{
+    "workout_id": "cceb797e-e4ff-404b-aa65-abd3ed6c6db3",
+    "date": "2021-09-10",
+    "time": "1700",
+    "completed": "False"
+}
+```
+
+```/users/:user_id/dates/:date_id``` --> DELETE --> will delete a scheduled date.
+```
+Response upon successful deletion: "Date has successfully been deleted"
+```
