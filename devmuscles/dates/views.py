@@ -10,6 +10,8 @@ from django.contrib.auth.models import User
 from workouts.models import Workout
 from uuid import uuid4
 
+
+
 # Create your views here.
 
 class DateList(APIView):
@@ -17,8 +19,13 @@ class DateList(APIView):
         query = request.GET.get('date')
         if query != None:
             dates = Date.objects.filter(user_id__pk = user_id).filter(date=query)
-            serializer = DateSerializer(dates, many=True)
-            return Response(serializer.data)
+            date_serializer = DateSerializer(dates, many=True)
+            workout_data = []
+            for i in range(len(date_serializer.data)):
+                workout = Workout.objects.filter(user_id__pk = user_id).get(id = date_serializer.data[i]['workout_id'])
+                workout_serializer = WorkoutSerializer(workout)
+                workout_data.append(workout_serializer.data)
+            return Response({"dates": date_serializer.data, "workouts": workout_data})
         user = User.objects.get(pk=user_id)
         if request.user != user:
             return Response("You are unauthorized to access this", status = status.HTTP_401_UNAUTHORIZED)
