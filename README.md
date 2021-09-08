@@ -218,4 +218,6 @@ Server wil respond with:
 ```
 
 - ```/users/:user_id/workouts/:workout_id/exercises/:exercise_id``` --> DELETE --> will delete that particular exercise from the workout.
-
+```
+Response upon successful deletion: "Exercise has successfully been deleted"
+```
